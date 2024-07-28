@@ -37,7 +37,7 @@ ext {
 	lombokVersion = '1.18.34'
 	mapstructVersion = '1.5.5.Final'
 	springDocVersion = '2.6.0'
-	wiremockTestContainerVersion = '3.1.0-alpha-13.1'
+	wiremockTestContainerVersion = '1.0-alpha-13'
 }
 
 dependencies {
@@ -56,7 +56,7 @@ dependencies {
 	testImplementation "org.testcontainers:testcontainers:${testContainersVersion}"
 	testImplementation "org.testcontainers:postgresql:${testContainersVersion}"
 	testImplementation "org.testcontainers:junit-jupiter:${testContainersVersion}"
-	testImplementation 'org.wiremock.integrations.testcontainers:wiremock-testcontainers-module:1.0-alpha-13'
+	testImplementation "org.wiremock.integrations.testcontainers:wiremock-testcontainers-module:${wiremockTestContainerVersion}"
 }
 
 tasks.named('test') {
