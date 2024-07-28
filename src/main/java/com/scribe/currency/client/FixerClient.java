@@ -32,24 +32,25 @@ public class FixerClient {
 
   public Map<String, BigDecimal> getExchangeRates() {
     FixerRatesResponse response = restTemplate.getForObject(exchangeUrl, FixerRatesResponse.class);
-    processErrorResponse(response);
+    processErrorResponse(response, "fetch exchange rates");
     return response.getRates();
   }
 
   public List<String> getSupportedCurrencies() {
     FixerSymbolsResponse response =
         restTemplate.getForObject(supportedCurrenciesUrl, FixerSymbolsResponse.class);
-    processErrorResponse(response);
+    processErrorResponse(response, "fetch supported currencies");
     return new ArrayList<>(response.getSymbols().keySet());
   }
 
-  private static void processErrorResponse(final AbstractFixerResponse response) {
+  private static void processErrorResponse(
+      final AbstractFixerResponse response, final String endpoint) {
     if (response == null) {
-      throw new RuntimeException("Failed to fetch supported currencies");
+      throw new RuntimeException("Failed to " + endpoint);
     }
     if (!response.isSuccess()) {
       ErrorResponse error = response.getError();
-      throw new RuntimeException("Error fetching supported currencies: " + error.getInfo());
+      throw new RuntimeException("Failed to " + endpoint + ": " + error.getInfo());
     }
   }
 }

@@ -26,14 +26,29 @@ spotless {
 	}
 }
 
-tasks.named('check') {
-	dependsOn 'spotlessCheck'
-}
+check.dependsOn('spotlessCheck', 'jacocoTestCoverageVerification')
 
 jacocoTestReport {
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it, exclude: ['**/**Application.class','**/dto/**', '**/response/**', '**/entity/**'])
+			fileTree(dir: it, exclude: ['**/**Application.class','**/dto/**', '**/response/**', '**/entity/**', '**/configuration/**'])
+		}))
+	}
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.8
+			}
+		}
+	}
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: ['**/**Application.class','**/dto/**', '**/response/**', '**/entity/**', '**/configuration/**'])
 		}))
 	}
 }
