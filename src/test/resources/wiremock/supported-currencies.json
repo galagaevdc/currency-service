@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/symbols?access_key=test"
+  },
+  "response": {
+    "status": 200,
+    "body": "{ \"success\": true, \"symbols\": { \"USD\": \"United States Dollar\", \"EUR\": \"Euro\" } }",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

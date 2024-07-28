@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: currency-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/currencydb
+    username: currencyuser
+    password: currencypass
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+fixer:
+  api:
+    url: http://data.fixer.io/api
+    key: ${FIXER_API_KEY}
+
+currency:
+  update:
+    fixedRateString: "PT1H"
+
+logging:
+  level:
+    root: INFO

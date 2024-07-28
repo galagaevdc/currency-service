@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:latest:///testdb
+    username: test
+    password: test
+  jpa:
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    enabled: true
+
+fixer:
+  api:
+    url: https://fake.io/api
+    key: fakekey
+
+currency:
+  update:
+    fixedRateString: "PT1H"
+
+logging:
+  level:
+    root: INFO

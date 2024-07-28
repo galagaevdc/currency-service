@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1-create-currency-table" author="d.halahayeu">
+        <createTable tableName="currency">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2-create-currency-exchange-table" author="d.halahayeu">
+        <createTable tableName="currency_exchange_rate">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="from_currency_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="to_currency_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="conversion_rate" type="DECIMAL(19, 4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="actualization_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint columnNames="from_currency_id, to_currency_id"
+                             tableName="currency_exchange_rate"
+                             constraintName="unique_from_to_currency"/>
+        <addForeignKeyConstraint constraintName="fk_currency_exchange_from" baseTableName="currency_exchange_rate"
+                                 baseColumnNames="from_currency_id"
+                                 referencedTableName="currency"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_currency_exchange_to" baseTableName="currency_exchange_rate"
+                                 baseColumnNames="to_currency_id"
+                                 referencedTableName="currency"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

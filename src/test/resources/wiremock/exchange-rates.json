@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/latest?access_key=test"
+  },
+  "response": {
+    "status": 200,
+    "body": "{ \"success\": true, \"base\": \"USD\", \"rates\": { \"EUR\": 0.85 } }",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
