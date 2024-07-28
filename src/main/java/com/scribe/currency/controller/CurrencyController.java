@@ -27,12 +27,12 @@ public class CurrencyController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public CurrencyDto addCurrency(@RequestBody CurrencyDto currencyDto) {
+  public CurrencyDto addCurrency(@RequestBody final CurrencyDto currencyDto) {
     return currencyService.addCurrency(currencyDto);
   }
 
   @GetMapping("/exchange/{code}")
-  public CurrencyExchangeDto getExchangeRate(@PathVariable String code) {
+  public CurrencyExchangeDto getExchangeRate(@PathVariable final String code) {
     return currencyService.getExchangeRate(code);
   }
 }

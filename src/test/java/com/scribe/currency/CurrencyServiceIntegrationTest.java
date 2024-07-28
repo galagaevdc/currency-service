@@ -34,46 +34,54 @@ import org.wiremock.integrations.testcontainers.WireMockContainer;
 @Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CurrencyServiceIntegrationTest {
-  public static final String TEST_KEY = "test";
-  public static final String BASE_URL = "http://localhost:%d/api/%s";
-  public static final String CURRENCIES_URL = "currencies";
-  public static final String EXCHANGE_URL = "currencies/exchange/USD";
-  public static final String EUR_CODE = "EUR";
-  public static final String EUR_NAME = "Euro";
-  public static final String USD_CODE = "USD";
-  public static final String USD_NAME = "United States Dollar";
+  private static final String TEST_KEY = "test";
+  private static final String BASE_URL = "http://localhost:%d/api/%s";
+  private static final String CURRENCIES_URL = "currencies";
+  private static final String EXCHANGE_URL = "currencies/exchange/USD";
+  private static final String EUR_CODE = "EUR";
+  private static final String EUR_NAME = "Euro";
+  private static final String USD_CODE = "USD";
+  private static final String USD_NAME = "United States Dollar";
+  private static final int HTTP_STATUS_OK = 200;
+  private static final int HTTP_STATUS_CREATED = 201;
+  private static final int WIREMOCK_PORT = 8080;
+  private static final int EXPECTED_CURRENCIES_COUNT = 2;
+  private static final BigDecimal EXCHANGE_RATE = BigDecimal.valueOf(0.85);
+  private static final int ORDER_THREE = 3;
+  private static final int ORDER_TWO = 2;
+  private static final int ORDER_ONE = 1;
+  private static final int EXPECTED_RATES_COUNT = 1;
   @Autowired private CurrencyService currencyService;
   @Autowired private TestRestTemplate restTemplate;
   @LocalServerPort private int port;
 
   @Container
-  public static PostgreSQLContainer<?> postgreSQLContainer =
+  private static final PostgreSQLContainer<?> POSTGRE_SQL_CONTAINER =
       new PostgreSQLContainer<>("postgres:latest")
           .withDatabaseName("testdb")
           .withUsername("test")
           .withPassword("test");
 
   @Container
-  public static WireMockContainer wiremockServer =
+  private static final WireMockContainer WIRE_MOCK_CONTAINER =
       new WireMockContainer(
               DockerImageName.parse("wiremock/wiremock:latest")
                   .asCompatibleSubstituteFor("wiremock/wiremock"))
-          .withExposedPorts(8080)
+          .withExposedPorts(WIREMOCK_PORT)
           .waitingFor(
               org.testcontainers.containers.wait.strategy.Wait.forHttp("/__admin/health")
-                  .forStatusCode(200))
+                  .forStatusCode(HTTP_STATUS_OK))
           .withMappingFromResource("symbols", "wiremock/supported-currencies.json")
           .withMappingFromResource("rates", "wiremock/exchange-rates.json");
 
   @DynamicPropertySource
-  static void setProperties(DynamicPropertyRegistry properties) {
-    properties.add(
-        "fixer.api.url", () -> CurrencyServiceIntegrationTest.wiremockServer.getBaseUrl());
-    properties.add("fixer.api.key", () -> CurrencyServiceIntegrationTest.TEST_KEY);
+  static void setProperties(final DynamicPropertyRegistry properties) {
+    properties.add("fixer.api.url", WIRE_MOCK_CONTAINER::getBaseUrl);
+    properties.add("fixer.api.key", () -> TEST_KEY);
   }
 
   @Test
-  @Order(1)
+  @Order(ORDER_ONE)
   public void testAddCurrency() {
     CurrencyDto firstCurrency = new CurrencyDto();
     firstCurrency.setCode(EUR_CODE);
@@ -87,46 +95,45 @@ public class CurrencyServiceIntegrationTest {
   }
 
   @Test
-  @Order(2)
+  @Order(ORDER_TWO)
   public void testGetSupportedCurrencies() {
     ResponseEntity<CurrencyDto[]> response =
         restTemplate.getForEntity(createURL(CURRENCIES_URL), CurrencyDto[].class);
-    assertEquals(200, response.getStatusCode().value());
-
+    assertEquals(HTTP_STATUS_OK, response.getStatusCode().value());
     CurrencyDto[] currencies = response.getBody();
     assertNotNull(currencies);
-    assertEquals(2, currencies.length);
+    assertEquals(EXPECTED_CURRENCIES_COUNT, currencies.length);
 
     CurrencyDto eurCurrency = findCurrencyByCode(currencies, EUR_CODE);
     assertNotNull(eurCurrency);
-    assertEquals(EUR_CODE, eurCurrency.getCode());
     assertEquals(EUR_NAME, eurCurrency.getName());
 
     CurrencyDto usdCurrency = findCurrencyByCode(currencies, USD_CODE);
     assertNotNull(usdCurrency);
-    assertEquals(USD_CODE, usdCurrency.getCode());
     assertEquals(USD_NAME, usdCurrency.getName());
   }
 
   @Test
-  @Order(3)
+  @Order(ORDER_THREE)
   public void testGetExchangeRate() {
     currencyService.updateExchangeRates();
 
     ResponseEntity<CurrencyExchangeDto> response =
         restTemplate.getForEntity(createURL(EXCHANGE_URL), CurrencyExchangeDto.class);
 
-    assertEquals(200, response.getStatusCode().value());
+    assertEquals(HTTP_STATUS_OK, response.getStatusCode().value());
     CurrencyExchangeDto exchangeRate = response.getBody();
     assertNotNull(exchangeRate);
+
+    // Assert base field
     assertEquals(USD_CODE, exchangeRate.getBase());
+
     assertNotNull(exchangeRate.getActualizationDate());
     assertNotNull(exchangeRate.getRates());
-    assertEquals(1, exchangeRate.getRates().size());
-
+    assertEquals(EXPECTED_RATES_COUNT, exchangeRate.getRates().size());
     RateDto rateDto = exchangeRate.getRates().iterator().next();
     assertEquals(EUR_CODE, rateDto.getCurrency());
-    assertEquals(BigDecimal.valueOf(0.85), rateDto.getRate());
+    assertEquals(EXCHANGE_RATE, rateDto.getRate());
   }
 
   private void addCurrency(final CurrencyDto currency) {
@@ -136,18 +143,17 @@ public class CurrencyServiceIntegrationTest {
     ResponseEntity<CurrencyDto> response =
         restTemplate.exchange(
             createURL(CURRENCIES_URL), HttpMethod.POST, entity, CurrencyDto.class);
-
-    assertEquals(201, response.getStatusCode().value());
+    assertEquals(HTTP_STATUS_CREATED, response.getStatusCode().value());
     CurrencyDto addedCurrency = response.getBody();
     assertNotNull(addedCurrency);
     assertEquals(currency.getCode(), addedCurrency.getCode());
   }
 
-  private String createURL(String uri) {
+  private String createURL(final String uri) {
     return BASE_URL.formatted(port, uri);
   }
 
-  private CurrencyDto findCurrencyByCode(CurrencyDto[] currencies, String code) {
+  private CurrencyDto findCurrencyByCode(final CurrencyDto[] currencies, final String code) {
     for (CurrencyDto currency : currencies) {
       if (currency.getCode().equals(code)) {
         return currency;

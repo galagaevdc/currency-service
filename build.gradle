@@ -3,6 +3,8 @@ plugins {
 	id 'org.springframework.boot' version '3.3.2'
 	id 'io.spring.dependency-management' version '1.1.6'
 	id 'com.diffplug.spotless' version '6.22.0'
+	id 'checkstyle'
+	id 'jacoco'
 }
 
 group = 'com.scribe'
@@ -26,6 +28,14 @@ spotless {
 
 tasks.named('check') {
 	dependsOn 'spotlessCheck'
+}
+
+jacocoTestReport {
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: ['**/**Application.class','**/dto/**', '**/response/**', '**/entity/**'])
+		}))
+	}
 }
 
 repositories {
@@ -59,6 +69,7 @@ dependencies {
 	testImplementation "org.wiremock.integrations.testcontainers:wiremock-testcontainers-module:${wiremockTestContainerVersion}"
 }
 
-tasks.named('test') {
+test {
 	useJUnitPlatform()
+	finalizedBy jacocoTestReport
 }

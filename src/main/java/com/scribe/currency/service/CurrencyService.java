@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class CurrencyService {
-  private static final Logger logger = LoggerFactory.getLogger(CurrencyService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyService.class);
 
   private final CurrencyRepository currencyRepository;
   private final CurrencyExchangeRepository currencyExchangeRepository;
@@ -64,7 +64,7 @@ public class CurrencyService {
         .collect(Collectors.toList());
   }
 
-  public CurrencyExchangeDto getExchangeRate(String code) {
+  public CurrencyExchangeDto getExchangeRate(final String code) {
     if (currencyRepository.findAll().stream()
         .noneMatch(currency -> currency.getCode().equals(code))) {
       throw new IllegalArgumentException("Currency " + code + " is not supported");
@@ -72,7 +72,7 @@ public class CurrencyService {
     return exchangeRatesCache.get(code);
   }
 
-  public CurrencyDto addCurrency(CurrencyDto currencyDto) {
+  public CurrencyDto addCurrency(final CurrencyDto currencyDto) {
     isSupported(currencyDto);
     CurrencyEntity entity = currencyMapper.toEntity(currencyDto);
     CurrencyEntity savedEntity = currencyRepository.save(entity);
@@ -87,7 +87,7 @@ public class CurrencyService {
 
   @Scheduled(fixedRateString = "${currency.update.fixedRateString}")
   public void updateExchangeRates() {
-    logger.info("Updating exchange rates");
+    LOGGER.info("Updating exchange rates");
     final Map<String, BigDecimal> exchangeRates = fixerClient.getExchangeRates();
     List<CurrencyEntity> currencies = currencyRepository.findAll();
     for (CurrencyEntity fromCurrency : currencies) {
@@ -97,7 +97,7 @@ public class CurrencyService {
         if (!fromCurrency.equals(toCurrency)) {
           final BigDecimal rate = exchangeRates.get(toCurrency.getCode());
           if (rate == null) {
-            logger.error(
+            LOGGER.error(
                 "Exchange rate from {} to {} not found",
                 fromCurrency.getCode(),
                 toCurrency.getCode());
@@ -110,7 +110,7 @@ public class CurrencyService {
       exchangeDto.setActualizationDate(LocalDateTime.now());
       exchangeRatesCache.put(fromCurrency.getCode(), exchangeDto);
     }
-    logger.info("Exchange rates updated");
+    LOGGER.info("Exchange rates updated");
   }
 
   private static void addRateForCache(
