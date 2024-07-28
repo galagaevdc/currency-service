@@ -4,10 +4,10 @@
 
 The API documentation is available at [Swagger UI](http://localhost:8080/swagger-ui.html).
 
-# Test coverage
+## Test coverage
 - Jacoco plugin is used for test coverage. You can find the report in the `build/reports/jacoco/test/html/index.html` directory.
 
-# Functional Requirements
+## Functional Requirements
 - Get a list of currencies used in the project;
 - Get exchange rates for a currency;
 - Add new currency for getting exchange rates.
