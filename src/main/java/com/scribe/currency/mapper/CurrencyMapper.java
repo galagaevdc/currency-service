@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface CurrencyMapper {
-    CurrencyDto toDto(CurrencyEntity entity);
-    CurrencyEntity toEntity(CurrencyDto dto);
+  CurrencyDto toDto(CurrencyEntity entity);
+
+  CurrencyEntity toEntity(CurrencyDto dto);
 }

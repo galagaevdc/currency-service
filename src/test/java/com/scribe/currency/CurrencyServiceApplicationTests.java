@@ -9,15 +9,13 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @SpringBootTest
 class CurrencyServiceApplicationTests {
-	@Container
-	public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest")
-			.withDatabaseName("testdb")
-			.withUsername("test")
-			.withPassword("test");
+  @Container
+  public static PostgreSQLContainer<?> postgreSQLContainer =
+      new PostgreSQLContainer<>("postgres:latest")
+          .withDatabaseName("testdb")
+          .withUsername("test")
+          .withPassword("test");
 
-
-	@Test
-	void contextLoads() {
-	}
-
+  @Test
+  void contextLoads() {}
 }

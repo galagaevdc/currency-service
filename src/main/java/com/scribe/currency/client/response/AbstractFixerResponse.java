@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public abstract class AbstractFixerResponse {
-    private boolean success;
-    private ErrorResponse error;
+  private boolean success;
+  private ErrorResponse error;
 }

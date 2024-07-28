@@ -7,8 +7,8 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class FixerIoRestTemplateConfig {
 
-    @Bean
-    public RestTemplate fixerIoRestTemplate() {
-        return new RestTemplate();
-    }
+  @Bean
+  public RestTemplate fixerIoRestTemplate() {
+    return new RestTemplate();
+  }
 }

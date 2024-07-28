@@ -1,11 +1,10 @@
 package com.scribe.currency.dto;
 
-import lombok.Data;
-
 import java.math.BigDecimal;
+import lombok.Data;
 
 @Data
 public class RateDto {
-    private String currency;
-    private BigDecimal rate;
+  private String currency;
+  private BigDecimal rate;
 }

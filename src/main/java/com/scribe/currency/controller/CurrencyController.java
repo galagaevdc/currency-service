@@ -3,6 +3,7 @@ package com.scribe.currency.controller;
 import com.scribe.currency.dto.CurrencyDto;
 import com.scribe.currency.dto.CurrencyExchangeDto;
 import com.scribe.currency.service.CurrencyService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,27 +14,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/currencies")
 @RequiredArgsConstructor
 public class CurrencyController {
-    private final CurrencyService currencyService;
+  private final CurrencyService currencyService;
 
-    @GetMapping
-    public List<CurrencyDto> getAllCurrencies() {
-        return currencyService.getSupportedCurrencies();
-    }
+  @GetMapping
+  public List<CurrencyDto> getAllCurrencies() {
+    return currencyService.getSupportedCurrencies();
+  }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CurrencyDto addCurrency(@RequestBody CurrencyDto currencyDto) {
-        return currencyService.addCurrency(currencyDto);
-    }
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public CurrencyDto addCurrency(@RequestBody CurrencyDto currencyDto) {
+    return currencyService.addCurrency(currencyDto);
+  }
 
-    @GetMapping("/exchange/{code}")
-    public CurrencyExchangeDto getExchangeRate(@PathVariable String code) {
-        return currencyService.getExchangeRate(code);
-    }
+  @GetMapping("/exchange/{code}")
+  public CurrencyExchangeDto getExchangeRate(@PathVariable String code) {
+    return currencyService.getExchangeRate(code);
+  }
 }

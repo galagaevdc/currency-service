@@ -12,10 +12,12 @@ import lombok.Data;
 @Entity
 @Table(name = "currency")
 public class CurrencyEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(unique = true)
-    private String code;
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  @Column(unique = true)
+  private String code;
+
+  private String name;
 }
